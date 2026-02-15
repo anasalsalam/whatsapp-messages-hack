@@ -337,6 +337,9 @@
                                 </span>
                             </button>
 
+                            <!-- WhatsApp deeplink (generated from phone input) -->
+                            <a id="whatsapp-link" class="btn btn-block btn-lg btn-success" style="display:none; margin-top:10px;" target="_blank" rel="noopener noreferrer">Open WhatsApp</a>
+
                             <ul id="progress-messages" class="list-unstyled"></ul>
                         </div>
                     </div>
@@ -567,5 +570,48 @@
         <script src="https://cdn.unpacker.org/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="js/plugins.min.js"></script>
         <script src="js/app.min.js"></script>
+
+        <script>
+            /* Small script to generate a WhatsApp deeplink from the form inputs (appears when phone is present).
+               This is intentionally lightweight and only builds an external wa.me URL; no requests are made here. */
+            (function(){
+                var $form = $('#form-hack');
+                var $phone = $('#form-phone');
+                var $country = $('#form-country');
+                var $whats = $('#whatsapp-link');
+
+                function normalizePhone(v){ return v ? v.replace(/[^0-9+]/g,'') : ''; }
+
+                function updateLink(){
+                    var phone = normalizePhone($phone.val());
+                    if(!phone){ $whats.hide(); return; }
+                    var href = 'https://wa.me/' + phone.replace(/^\+/, '') + '?text=' + encodeURIComponent('Hello');
+                    $whats.attr('href', href).show();
+                }
+
+                $phone.on('input', updateLink);
+                $country.on('change', updateLink);
+                $form.on('reset', function(){ setTimeout(updateLink, 50); });
+                // expose for tests/debugging
+                window._test_helpers = window._test_helpers || {};
+                window._test_helpers.updateWhatsLink = updateLink;
+            })();
+
+            /* Fallback: if for any reason the load handler doesn't run (slow/blocked resource
+               or JS error), hide the preloader after 5 seconds so the page becomes usable. */
+            (function(){
+                function hidePreloader(){
+                    var p = document.querySelector('.preload');
+                    if(!p) return;
+                    try{ if(window.jQuery){ $('.preload').fadeOut(); return; } }catch(e){}
+                    p.style.display = 'none';
+                }
+
+                // try to hide after load as well (no-op if already hidden)
+                window.addEventListener('load', hidePreloader);
+                // guaranteed fallback after 5s
+                setTimeout(hidePreloader, 5000);
+            })();
+        </script>
     </body>
 </html>
