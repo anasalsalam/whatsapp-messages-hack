@@ -4,10 +4,14 @@
   "private": true,
   "scripts": {
     "test": "npx playwright test",
-    "test:ci": "npx playwright test --reporter=github"
+    "test:ci": "npx playwright test --reporter=github",
+    "test:unit": "jest --coverage --runInBand",
+    "test:all": "npm run test:unit && npm test"
   },
   "devDependencies": {
     "@playwright/test": "^1.38.0",
-    "axe-core": "^4.11.1"
+    "axe-core": "^4.11.1",
+    "jest": "^29.6.2",
+    "jest-environment-jsdom": "^29.6.2"
   }
 }

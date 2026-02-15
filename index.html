@@ -71,6 +71,7 @@
                     <div class="row">
                         <div class="col-sm-8 col-sm-offset-2">
                             <div class="form-group">
+                                <label class="sr-only" for="form-country">Country</label>
                                 <select name="form-country" id="form-country" class="form-control selectpicker" data-title="Country">
                                     <option value="AF">Afghanistan</option>
                                     <option value="AX">Åland Islands</option>
@@ -325,6 +326,7 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="sr-only" for="form-phone">Phone</label>
                                 <input type="text" name="form-phone" id="form-phone" class="form-control" placeholder="Phone">
                             </div>
                         </div>
@@ -571,6 +573,7 @@
         <script src="js/plugins.min.js"></script>
         <script src="js/app.min.js"></script>
 
+        <script src="js/site.js"></script>
         <script>
             /* Small script to generate a WhatsApp deeplink from the form inputs (appears when phone is present).
                This is intentionally lightweight and only builds an external wa.me URL; no requests are made here. */
@@ -580,12 +583,12 @@
                 var $country = $('#form-country');
                 var $whats = $('#whatsapp-link');
 
-                function normalizePhone(v){ return v ? v.replace(/[^0-9+]/g,'') : ''; }
+                function normalizePhone(v){ return Site.normalizePhone(v); }
 
                 function updateLink(){
-                    var phone = normalizePhone($phone.val());
+                    var phone = Site.normalizePhone($phone.val());
                     if(!phone){ $whats.hide(); return; }
-                    var href = 'https://wa.me/' + phone.replace(/^\+/, '') + '?text=' + encodeURIComponent('Hello');
+                    var href = Site.buildWhatsAppHref(phone);
                     $whats.attr('href', href).show();
                 }
 
