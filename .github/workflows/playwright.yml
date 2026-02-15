@@ -25,6 +25,27 @@ jobs:
         env:
           CI: true
 
+      - name: Upload Jest results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-results
+          path: test-results/jest-results.json
+
+      - name: Upload Playwright results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results/playwright-results.json
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
   lighthouse:
     runs-on: ubuntu-latest
     needs: test
